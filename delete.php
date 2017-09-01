@@ -2,4 +2,5 @@
 require 'database.php';
 require 'functions.php';
 
-delete_post();
+$id = $_GET['id'];
+delete_post($id);

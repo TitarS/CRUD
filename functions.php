@@ -12,52 +12,48 @@ function get_all_posts() {
     return $posts;
 }
 
-function insert_posts() {
+function insert_post($title, $content, $image) {
     global $mysqli;
 
-    $title = $_POST['title'];
-    $content = $_POST['content'];
-
-    $sql = "INSERT INTO posts (title, content) VALUE ('$title','$content')";
+    $image_name = upload_image($image);
+    $sql = "INSERT INTO posts (title, content, image) VALUE ('$title','$content','$image_name')";
     mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
 }
 
-function edit_posts() {
-    global $mysqli;
-
-    $title = $_POST['title'];
-    $content = $_POST['content'];
-
-    $sql = "UPDATE posts SET title='$title', content='$content' WHERE id=" . $_GET['id'];
-    mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
-    echo "<script>window.location.href='http://crudlast/edit.php?id=" . $_GET['id'] . "'</script>";
+function upload_image($image) {
+    $image_name = generate_name();
+    move_uploaded_file($image['tmp_name'], 'uploads/' . $image_name);
+    return $image_name;
 }
 
-function get_value() {
-    global $mysqli;
-    global $titleVal;
-    global $contentVal;
-
-    $sqlUpd = 'SELECT title, content FROM posts WHERE id =' . $_GET['id'];
-    $query = mysqli_query($mysqli, $sqlUpd);
-    $values = mysqli_fetch_assoc($query);
-    $titleVal = $values['title'];
-    $contentVal = $values['content'];
+function generate_name() {
+    $image = $_FILES['image'];
+    $file_name = uniqid();
+    $extension = explode('.', $image['name']);
+    $image_name = $file_name . '.' . $extension[1];
+    return $image_name;
 }
 
-function delete_post() {
+function edit_post($id) {
+        global $mysqli;
+
+        $sql = "UPDATE posts SET title='" . $_POST['title'] . "', content='" . $_POST['content'] . "' WHERE id=" . $id;
+        mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
+        echo "<script>window.location.href='http://crudlast/edit.php?id=" . $id . "'</script>";
+}
+
+function delete_post($id) {
     global $mysqli;
 
-    $sqlDel = 'DELETE FROM posts WHERE id=' . $_GET['id'];
+    $sqlDel = 'DELETE FROM posts WHERE id=' . $id;
     mysqli_query($mysqli, $sqlDel) or die ('error' . $mysqli->error);
     header('Location: http://crudlast');
 }
 
-function get_post_for_id() {
+function get_post($id) {
     global $mysqli;
-    global $post;
 
-    $sql = 'SELECT title, content FROM posts WHERE id=' . $_GET['id'];
+    $sql = 'SELECT title, content, image FROM posts WHERE id=' . $id;
     $query = mysqli_query($mysqli, $sql);
     $post = mysqli_fetch_assoc($query);
     return $post;
