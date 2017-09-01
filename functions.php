@@ -45,9 +45,24 @@ function edit_post($id) {
 function delete_post($id) {
     global $mysqli;
 
+    delete_image($id);
     $sqlDel = 'DELETE FROM posts WHERE id=' . $id;
-    mysqli_query($mysqli, $sqlDel) or die ('error' . $mysqli->error);
+    mysqli_query($mysqli, $sqlDel) or die ('error ' . $mysqli->error);
     header('Location: http://crudlast');
+}
+
+function delete_image($id) {
+    $image_name = get_name_image($id);
+    unlink("uploads/$image_name");
+}
+
+function get_name_image($id) {
+    global $mysqli;
+
+    $sql = 'SELECT image from posts WHERE id=' . $id;
+    $query = mysqli_query($mysqli,$sql) or die ('error ' . $mysqli->error);
+    $image_name = mysqli_fetch_assoc($query);
+    return $image_name['image'];
 }
 
 function get_post($id) {
