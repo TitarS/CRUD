@@ -3,6 +3,7 @@ require 'database.php';
 
 function get_all_posts() {
     global $mysqli;
+
     $sql = 'SELECT * FROM posts';
     $query = mysqli_query($mysqli, $sql);
     $posts = [];
@@ -15,7 +16,9 @@ function get_all_posts() {
 function insert_post($title, $content, $image) {
     global $mysqli;
 
-    $image_name = upload_image($image);
+    if(!empty($image['name'])) {
+        $image_name = upload_image($image);
+    }
     $sql = "INSERT INTO posts (title, content, image) VALUE ('$title','$content','$image_name')";
     mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
 }
@@ -34,18 +37,33 @@ function generate_name() {
     return $image_name;
 }
 
-function edit_post($id) {
-        global $mysqli;
+function edit_post($id, $image) {
+    global $mysqli;
 
-        $sql = "UPDATE posts SET title='" . $_POST['title'] . "', content='" . $_POST['content'] . "' WHERE id=" . $id;
-        mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
-        echo "<script>window.location.href='http://crudlast/edit.php?id=" . $id . "'</script>";
+    if(!empty($image['name'])) {
+        $image_name = change_image($id, $image);
+    }
+    $sql = "UPDATE posts SET title='" . $_POST['title'] . "', content='" . $_POST['content'] . "', image='" . $image_name . "' WHERE id=" . $id;
+    mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
+    echo "<script>window.location.href='http://crudlast/edit.php?id=" . $id . "'</script>";
+}
+
+function change_image($id, $image) {
+    if (get_name_image($id)) {
+        delete_image($id);
+    }
+    if(!empty($image['name'])) {
+        $image_name = upload_image($image);
+        return $image_name;
+    }
 }
 
 function delete_post($id) {
     global $mysqli;
 
-    delete_image($id);
+    if(get_name_image($id)) {
+        delete_image($id);
+    }
     $sqlDel = 'DELETE FROM posts WHERE id=' . $id;
     mysqli_query($mysqli, $sqlDel) or die ('error ' . $mysqli->error);
     header('Location: http://crudlast');

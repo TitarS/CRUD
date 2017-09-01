@@ -10,7 +10,6 @@ echo " <form action='' method='post' enctype='multipart/form-data'>
 </form>";
 
 if(!empty($_POST['title']) && !empty($_POST['content'])) {
-
     insert_post($_POST['title'], $_POST['content'], $_FILES['image']);
 }
 
