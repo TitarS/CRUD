@@ -13,9 +13,8 @@ echo " <form action='' method='post' enctype='multipart/form-data'>
 </form>";
 
 if(!empty($_POST['title']) && !empty($_POST['content'])) {
-    edit_post($id, $_FILES['image']);
+    edit_post($id);
 }
-
 
 
 echo "<br /><a href='http://crudlast'>back</a>";

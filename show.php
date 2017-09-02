@@ -2,8 +2,7 @@
 require 'database.php';
 require 'functions.php';
 
-$id = $_GET['id'];
-$post = get_post($id);
+$post = get_post($_GET['id']);
 
 echo "<h4>" . $post['title'] ."</h4>";
 echo "<p>" . $post['content'] . "</p>";

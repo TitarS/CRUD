@@ -37,23 +37,23 @@ function generate_name() {
     return $image_name;
 }
 
-function edit_post($id, $image) {
+function edit_post($id) {
     global $mysqli;
 
-    if(!empty($image['name'])) {
-        $image_name = change_image($id, $image);
+    if(!empty($_FILES['image']['name'])) {
+        $image_name = change_image($id);
     }
     $sql = "UPDATE posts SET title='" . $_POST['title'] . "', content='" . $_POST['content'] . "', image='" . $image_name . "' WHERE id=" . $id;
     mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
     echo "<script>window.location.href='http://crudlast/edit.php?id=" . $id . "'</script>";
 }
 
-function change_image($id, $image) {
+function change_image($id) {
     if (get_name_image($id)) {
         delete_image($id);
     }
-    if(!empty($image['name'])) {
-        $image_name = upload_image($image);
+    if(!empty($_FILES['image']['name'])) {
+        $image_name = upload_image($_FILES['image']);
         return $image_name;
     }
 }
