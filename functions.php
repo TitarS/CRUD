@@ -16,62 +16,62 @@ function get_all_posts() {
 function insert_post($title, $content, $image) {
     global $mysqli;
 
-    if(!empty($image['name'])) {
-        $image_name = upload_image($image);
-    }
+    $image_name = upload_image($image);
     $sql = "INSERT INTO posts (title, content, image) VALUE ('$title','$content','$image_name')";
     mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
 }
 
 function upload_image($image) {
-    $image_name = generate_name();
-    move_uploaded_file($image['tmp_name'], 'uploads/' . $image_name);
-    return $image_name;
+    if(!empty($image['name'])) {
+        $image_name = generate_name($image);
+        move_uploaded_file($image['tmp_name'], 'uploads/' . $image_name);
+        return $image_name;
+    }
 }
 
-function generate_name() {
-    $image = $_FILES['image'];
+function generate_name($image) {
     $file_name = uniqid();
     $extension = explode('.', $image['name']);
     $image_name = $file_name . '.' . $extension[1];
     return $image_name;
 }
 
-function edit_post($id) {
+function edit_post($id, $title, $content, $image) {
     global $mysqli;
 
-    if(!empty($_FILES['image']['name'])) {
-        $image_name = change_image($id);
-    }
-    $sql = "UPDATE posts SET title='" . $_POST['title'] . "', content='" . $_POST['content'] . "', image='" . $image_name . "' WHERE id=" . $id;
+    $image_name = change_image($id, $image);
+    $sql = "UPDATE posts SET title='" . $title . "', content='" . $content . "', image='" . $image_name . "' WHERE id=" . $id;
     mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
-    echo "<script>window.location.href='http://crudlast/edit.php?id=" . $id . "'</script>";
+//    echo "<script>window.location.href='http://crudlast/edit.php?id=" . $id . "'</script>";
 }
 
-function change_image($id) {
-    if (get_name_image($id)) {
+function change_image($id, $image) {
+    if(!empty($image['name'])) {
         delete_image($id);
-    }
-    if(!empty($_FILES['image']['name'])) {
-        $image_name = upload_image($_FILES['image']);
+        $image_name = upload_image($image);
         return $image_name;
+    }
+    else {
+        delete_image($id);
     }
 }
 
 function delete_post($id) {
     global $mysqli;
 
-    if(get_name_image($id)) {
-        delete_image($id);
-    }
+    delete_image($id);
     $sqlDel = 'DELETE FROM posts WHERE id=' . $id;
     mysqli_query($mysqli, $sqlDel) or die ('error ' . $mysqli->error);
     header('Location: http://crudlast');
 }
 
 function delete_image($id) {
-    $image_name = get_name_image($id);
-    unlink("uploads/$image_name");
+    if(get_name_image($id)) {
+        $image_name = "uploads/" . get_name_image($id);
+        if(file_exists($image_name)) {
+            unlink($image_name);
+        }
+    }
 }
 
 function get_name_image($id) {

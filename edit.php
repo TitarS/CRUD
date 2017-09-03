@@ -13,7 +13,7 @@ echo " <form action='' method='post' enctype='multipart/form-data'>
 </form>";
 
 if(!empty($_POST['title']) && !empty($_POST['content'])) {
-    edit_post($id);
+    edit_post($id, $_POST['title'], $_POST['content'], $_FILES['image']);
 }
 
 
