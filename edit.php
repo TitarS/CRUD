@@ -2,6 +2,10 @@
 require 'database.php';
 require 'functions.php';
 
+if(!empty($_POST['title']) && !empty($_POST['content'])) {
+    header('Location: http://crudlast');
+}
+
 $id = $_GET['id'];
 $post = get_post($id);
 

@@ -42,7 +42,6 @@ function edit_post($id, $title, $content, $image) {
     $image_name = change_image($id, $image);
     $sql = "UPDATE posts SET title='" . $title . "', content='" . $content . "', image='" . $image_name . "' WHERE id=" . $id;
     mysqli_query($mysqli, $sql) or die('error' . $mysqli->error);
-//    echo "<script>window.location.href='http://crudlast/edit.php?id=" . $id . "'</script>";
 }
 
 function change_image($id, $image) {
